@@ -1,18 +1,7 @@
 module RegFile (
     // Clock and Reset
-    input   wire            ACLK,
-    input   wire            ARESETN,
-
-    // Capture Regs
-    input   wire [31:0]     AW,
-    input   wire [31:0]     AWInfo,
-    input   wire [63:0]     W,
-    input   wire [31:0]     WInfo,
-    input   wire [31:0]     BInfo,
-    input   wire [31:0]     AR,
-    input   wire [31:0]     ARInfo,
-    input   wire [63:0]     R,
-    input   wire [31:0]     RInfo,
+    input   wire            CLK,
+    input   wire            RESETn,
 
     // APB Interface
     input   wire [31:0]     PADDR,
@@ -25,8 +14,14 @@ module RegFile (
     output  wire [31:0]     PRDATA,
 
     // Control Signals
-    input   wire            Capt,
-    output  wire            Irq
+    output  wire            CONSTANT_TIME,
+    output  wire            START_PULSE,
+    output  wire [2:0]      OPCODE,
+    input   wire [11:0]     CYCLE_COUNT,
+    input   wire            DONE_PULSE,
+
+    // Interrupt
+    output  wire            IRQ
 );
 
     // =========================================================================
@@ -35,19 +30,9 @@ module RegFile (
     // Offset   | Reg Name
     // -------------------------------------------------------------------------
     // 0x00     | ID Register
-    // 0x04     | AW Info (AWLEN, AWSIZE, AWBURST, AWID)
-    // 0x08     | AW
-    // 0x0C     | W Info (WSTRB, WLAST)
-    // 0x10     | W_Low (WDATA[31:0])
-    // 0x14     | W_High (WDATA[63:32])
-    // 0x18     | B Info (BRESP, BID)
-    // 0x1C     | AR Info (ARLEN, ARSIZE, ARBURST, ARID)
-    // 0x20     | AR
-    // 0x24     | R Info (RLAST, RRESP, RID)
-    // 0x28     | R_Low (R[31:0])
-    // 0x2C     | R_High (R[63:32])
-    // 0x30     | CTRL
-    // 0x34     | STAT
+    // 0x04     | CTRL
+    // 0x08     | STATUS
+
     //--------------------------------------------------------------------------
 
     // Internal APB Signals
@@ -61,51 +46,50 @@ module RegFile (
     // Registers
     reg [31:0]  reg_CTRL;
     reg [31:0]  reg_STAT;
+    reg [31:0]  reg_DBG0;
+    reg [31:0]  reg_DBG1;
+    reg [31:0]  reg_DBG2;
+    reg [31:0]  reg_DBG3;
+    reg [31:0]  reg_DBG4;
 
     // Register Access
 
-    wire [3:0]  addr_oft;
-    assign addr_oft = PADDR[5:2];
+    wire [2:0]  addr_oft;
+    assign addr_oft = PADDR[4:2];
 
     // REG_CTRL
-    always @(posedge ACLK or negedge ARESETN)
-        if (!ARESETN)
+    always @(posedge CLK or negedge RESETn)
+        if (!RESETn)
             reg_CTRL        <= 32'd0;
-        else if (wr_en && (addr_oft == 4'd12))
+        else if (wr_en && (addr_oft == 3'd1))
             reg_CTRL        <= PWDATA;
 
     // REG_STAT
-    always @(posedge ACLK or negedge ARESETN)
-        if (!ARESETN)
+    always @(posedge CLK or negedge RESETn)
+        if (!RESETn)
             reg_STAT        <= 32'd0;
         else if(Capt)
             reg_STAT[0]     <= 1'b1;
-        else if (wr_en && (addr_oft == 4'd13) && (PWDATA[0] == 1'b1))
+        else if (wr_en && (addr_oft == 3'd2) && (PWDATA[0] == 1'b1))
             reg_STAT[0]     <= 1'b0;
 
 
     // Read Data
     always @(*)
         case (addr_oft)
-            4'd0    : reg_data_out  = 32'h5A5A5A5A;
-            4'd1    : reg_data_out  = AWInfo;
-            4'd2    : reg_data_out  = AW;
-            4'd3    : reg_data_out  = WInfo;
-            4'd4    : reg_data_out  = W[31:0];
-            4'd5    : reg_data_out  = W[63:32];
-            4'd6    : reg_data_out  = BInfo;
-            4'd7    : reg_data_out  = ARInfo;
-            4'd8    : reg_data_out  = AR;
-            4'd9    : reg_data_out  = RInfo;
-            4'd10   : reg_data_out  = R[31:0];
-            4'd11   : reg_data_out  = R[63:32];
-            4'd12   : reg_data_out  = reg_CTRL;
-            4'd13   : reg_data_out  = reg_STAT;
+            3'd0    : reg_data_out  = 32'h5A5A5A5A;
+            3'd1    : reg_data_out  = REG_CTRL;
+            3'd2    : reg_data_out  = REG_STAT;
+            3'd3    : reg_data_out  = reg_DBG0;
+            3'd4    : reg_data_out  = reg_DBG1;
+            3'd5    : reg_data_out  = reg_DBG2;
+            3'd6    : reg_data_out  = reg_DBG3;
+            3'd7    : reg_data_out  = reg_DBG4;
             default : reg_data_out  = 32'd0;
         endcase
 
-    always @(posedge ACLK or negedge ARESETN)
-        if (!ARESETN)
+    always @(posedge CLK or negedge RESETn)
+            if (!RESETn)
             apb_prdata  <= 32'd0;
         else if (rd_en)
             apb_prdata  <= reg_data_out;
