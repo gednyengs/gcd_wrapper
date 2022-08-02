@@ -46,12 +46,18 @@ module AxiUnpacker (
     input   wire            RREADY,
 
     // GCD Interface Signals
-
-    input   wire            DONE,
     output  wire [1278:0]   ARG_A,
     output  wire [1278:0]   ARG_B,
-    input   wire [1283:0]   RESULT_A,
-    input   wire [1283:0]   RESULT_B
+
+    input   wire            DONE,
+    input   wire [1283:0]   BEZOUT_A,
+    input   wire [1283:0]   BEZOUT_B,
+    input   wire [1283:0]   DEBUG_A,
+    input   wire [1283:0]   DEBUG_B,
+    input   wire [1283:0]   DEBUG_U,
+    input   wire [1283:0]   DEBUG_Y,
+    input   wire [1283:0]   DEBUG_L,
+    input   wire [1283:0]   DEBUG_N
 );
 
     wire                    sram_ce_n;

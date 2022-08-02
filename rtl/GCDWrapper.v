@@ -67,18 +67,36 @@ module GCDWrapper (
     // Internal Signals
     //
 
-    wire                    constant_time_w;
-    wire                    start_pulse_w;
-    wire [2:0]              opcode_w;
-    wire [11:0]             cycle_count_w;
+    wire                    constant_time;
+    wire                    debug_mode;
+    wire                    start_pulse;
+    wire [2:0]              opcode;
+    wire [11:0]             cycle_count;
+    wire [1278:0]           arg_a;
+    wire [1278:0]           arg_b;
 
-    wire [1278:0]           arg_a_w;
-    wire [1278:0]           arg_b_w;
-    wire [1283:0]           result_a_w;
-    wire [1283:0]           result_b_w;
+    wire [1283:0]           bezout_a;
+    wire [1283:0]           bezout_b;
+    wire [1283:0]           debug_a;
+    wire [1283:0]           debug_b;
+    wire [1283:0]           debug_u;
+    wire [1283:0]           debug_y;
+    wire [1283:0]           debug_l;
+    wire [1283:0]           debug_n;
+    wire [15:0]             debug_lower_a;
+    wire [15:0]             debug_lower_b;
+    wire [15:0]             debug_lower_u;
+    wire [15:0]             debug_lower_y;
+    wire [15:0]             debug_lower_l;
+    wire [15:0]             debug_lower_n;
+    wire [3:0]              debug_case_a_b;
+    wire [4:0]              debug_case_u;
+    wire [4:0]              debug_case_y;
+    wire [4:0]              debug_case_l;
+    wire [4:0]              debug_case_n;
 
-    wire                    done_w;
-    wire                    done_pulse_w;
+    wire                    done;
+    wire                    done_pulse;
     reg                     done_r;
 
     //
@@ -98,11 +116,23 @@ module GCDWrapper (
         .PREADY             (S_APB_PREADY),
         .PSLVERR            (S_APB_PSLVERR),
 
-        .CONSTANT_TIME      (constant_time_w),
-        .START_PULSE        (start_pulse_w),
-        .OPCODE             (opcode_w),
-        .CYCLE_COUNT        (cycle_count_w),
-        .DONE_PULSE         (done_pulse_w),
+        .CONSTANT_TIME      (constant_time),
+        .START_PULSE        (start_pulse),
+        .OPCODE             (opcode),
+
+        .DONE_PULSE         (done_pulse),
+        .CYCLE_COUNT        (cycle_count),
+        .DEBUG_LOWER_A      (debug_lower_a),
+        .DEBUG_LOWER_B      (debug_lower_b),
+        .DEBUG_LOWER_U      (debug_lower_u),
+        .DEBUG_LOWER_Y      (debug_lower_y),
+        .DEBUG_LOWER_L      (debug_lower_l),
+        .DEBUG_LOWER_N      (debug_lower_n),
+        .DEBUG_CASE_A_B     (debug_case_a_b),
+        .DEBUG_CASE_U       (debug_case_u),
+        .DEBUG_CASE_Y       (debug_case_y),
+        .DEBUG_CASE_L       (debug_case_l),
+        .DEBUG_CASE_N       (debug_case_n),
 
         .IRQ                (IRQ)
     );
@@ -151,11 +181,17 @@ module GCDWrapper (
         .RVALID             (S_AXI_RVALID),
         .RREADY             (S_AXI_RREADY),
 
-        .DONE               (done_pulse_w),
-        .ARG_A              (arg_a_w),
-        .ARG_B              (arg_b_w),
-        .RESULT_A           (result_a_w),
-        .RESULT_B           (result_b_w)
+        .ARG_A              (arg_a),
+        .ARG_B              (arg_b),
+        .DONE               (done_pulse),
+        .BEZOUT_A           (bezout_a),
+        .BEZOUT_B           (bezout_b),
+        .DEBUG_A            (debug_a),
+        .DEBUG_B            (debug_b),
+        .DEBUG_U            (debug_u),
+        .DEBUG_Y            (debug_y),
+        .DEBUG_L            (debug_l),
+        .DEBUG_N            (debug_n)
     );
 
     //
@@ -166,9 +202,9 @@ module GCDWrapper (
         if (!RESETn)
             done_r  <= 1'b0;
         else if (CLKEN)
-            done_r  <= done_w;
+            done_r  <= done;
 
-    assign done_pulse_w = done_w & ~done_r;
+    assign done_pulse = do & ~done_r;
 
     //
     // GCD Module
@@ -179,16 +215,34 @@ module GCDWrapper (
         .clk_en             (CLKEN),
         .rst_n              (RESETn),
 
-        .constant_time      (constant_time_w),
-        .start              (start_pulse_w),
-        .op_code            (opcode_w),
-        .A                  (arg_a_w),
-        .B                  (arg_b_w),
+        .constant_time      (constant_time),
+        .debug_mode         (debug_mode),
+        .start              (start_pulse),
+        .op_code            (opcode),
+        .A                  (arg_a),
+        .B                  (arg_b),
 
-        .done               (done_w),
-        .cycle_count        (cycle_count_w),
-        .bezout_a           (result_a_w),
-        .bezout_b           (result_b_w)
+        .done               (done),
+        .cycle_count        (cycle_count),
+        .bezout_a           (bezout_a),
+        .bezout_b           (bezout_b),
+        .debug_a            (debug_a),
+        .debug_b            (debug_b),
+        .debug_u            (debug_u),
+        .debug_y            (debug_y),
+        .debug_l            (debug_l),
+        .debug_n            (debug_n),
+        .debug_lower_a      (debug_lower_a),
+        .debug_lower_b      (debug_lower_b),
+        .debug_lower_u      (debug_lower_u),
+        .debug_lower_y      (debug_lower_y),
+        .debug_lower_l      (debug_lower_l),
+        .debug_lower_n      (debug_lower_n),
+        .debug_case_a_b     (debug_case_a_b),
+        .debug_case_u       (debug_case_u),
+        .debug_case_y       (debug_case_y),
+        .debug_case_l       (debug_case_l),
+        .debug_case_n       (debug_case_n)
     );
 
 endmodule

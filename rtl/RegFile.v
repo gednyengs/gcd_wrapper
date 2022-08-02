@@ -17,8 +17,20 @@ module RegFile (
     output  wire            CONSTANT_TIME,
     output  wire            START_PULSE,
     output  wire [2:0]      OPCODE,
-    input   wire [11:0]     CYCLE_COUNT,
+
     input   wire            DONE_PULSE,
+    input   wire [11:0]     CYCLE_COUNT,
+    input   wire [15:0]     DEBUG_LOWER_A,
+    input   wire [15:0]     DEBUG_LOWER_B,
+    input   wire [15:0]     DEBUG_LOWER_U,
+    input   wire [15:0]     DEBUG_LOWER_Y,
+    input   wire [15:0]     DEBUG_LOWER_L,
+    input   wire [15:0]     DEBUG_LOWER_N,
+    input   wire [3:0]      DEBUG_CASE_A_B,
+    input   wire [4:0]      DEBUG_CASE_U,
+    input   wire [4:0]      DEBUG_CASE_Y,
+    input   wire [4:0]      DEBUG_CASE_L,
+    input   wire [4:0]      DEBUG_CASE_N,
 
     // Interrupt
     output  wire            IRQ
