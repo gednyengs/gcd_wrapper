@@ -205,7 +205,7 @@ module GCDWrapper (
         else if (CLKEN)
             done_r  <= done;
 
-    assign done_pulse = do & ~done_r;
+    assign done_pulse = done & ~done_r;
 
     //
     // GCD Module

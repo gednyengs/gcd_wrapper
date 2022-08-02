@@ -137,8 +137,14 @@ module AxiUnpacker (
         .DONE               (DONE),
         .ARG_A              (ARG_A),
         .ARG_B              (ARG_B),
-        .RESULT_A           (RESULT_A),
-        .RESULT_B           (RESULT_B)
+        .BEZOUT_A           (BEZOUT_A),
+        .BEZOUT_B           (BEZOUT_B),
+        .DEBUG_A            (DEBUG_A),
+        .DEBUG_B            (DEBUG_B),
+        .DEBUG_U            (DEBUG_U),
+        .DEBUG_Y            (DEBUG_Y),
+        .DEBUG_L            (DEBUG_L),
+        .DEBUG_N            (DEBUG_N)
     );
 
 endmodule
