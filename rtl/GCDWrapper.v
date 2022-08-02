@@ -117,8 +117,9 @@ module GCDWrapper (
         .PSLVERR            (S_APB_PSLVERR),
 
         .CONSTANT_TIME      (constant_time),
-        .START_PULSE        (start_pulse),
+        .DEBUG_MODE         (debug_mode),
         .OPCODE             (opcode),
+        .START_PULSE        (start_pulse),
 
         .DONE_PULSE         (done_pulse),
         .CYCLE_COUNT        (cycle_count),
