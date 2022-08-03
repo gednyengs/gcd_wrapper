@@ -39,7 +39,7 @@ module GCDWrapper (
     output  wire [1:0]      S_AXI_BRESP,
     output  wire            S_AXI_BVALID,
     input   wire            S_AXI_BREADY,
-
+    
     input   wire [3:0]      S_AXI_ARID,
     input   wire [31:0]     S_AXI_ARADDR,
     input   wire [7:0]      S_AXI_ARLEN,
@@ -70,7 +70,7 @@ module GCDWrapper (
     wire                    constant_time;
     wire                    debug_mode;
     wire                    start_pulse;
-    wire [2:0]              opcode;
+    wire [11:0]             opcode;
     wire [11:0]             cycle_count;
     wire [1278:0]           arg_a;
     wire [1278:0]           arg_b;
@@ -186,7 +186,7 @@ module GCDWrapper (
         .ARG_B              (arg_b),
         .DONE               (done_pulse),
         .BEZOUT_A           (bezout_a),
-        .BEZOUT_B           (bezout_b),
+        .BEZOUT_B           (bezout_b),CLK
         .DEBUG_A            (debug_a),
         .DEBUG_B            (debug_b),
         .DEBUG_U            (debug_u),

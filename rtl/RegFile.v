@@ -16,7 +16,7 @@ module RegFile (
     // Control Signals
     output  wire            CONSTANT_TIME,
     output  wire            DEBUG_MODE,
-    output  wire [2:0]      OPCODE,
+    output  wire [11:0]     OPCODE,
     output  wire            START_PULSE,
 
     input   wire            DONE_PULSE,
@@ -43,9 +43,9 @@ module RegFile (
     // Offset   | Reg Name
     // -------------------------------------------------------------------------
     // 0x00     | ID Register
-    // 0x04     | CTRL (IE [6:6], CONSTANT_TIME[5:5], DEBUG_MODE[4:4], OPCODE[3:1],
+    // 0x04     | CTRL (IE [15:15], CONSTANT_TIME[14:14], DEBUG_MODE[13:13], OPCODE[12:1],
     //                  START_PULSE[0:0])
-    // 0x08     | STATUS (IRQ_STATUS)
+    // 0x08     | STATUS (RUN_STATUS, IRQ_STATUS)
     // 0x0C     | CYCLE_COUNT
     // 0x10     | DEBUG_0   (DEBUG_LOWER_B, DEBUG_LOWER_A)
     // 0x14     | DEBUG_1   (DEBUG_LOWER_Y, DEBUG_LOWER_U)
@@ -65,7 +65,8 @@ module RegFile (
     // Registers
     reg [31:0]  reg_CTRL;
     reg         reg_START_PULSE;
-    reg         reg_STAT;
+    reg         reg_IE_STAT;
+    reg         reg_RUN_STAT;
 
     // Register Access
 
@@ -88,22 +89,30 @@ module RegFile (
         else
             reg_START_PULSE <= 1'b0;
 
-    // reg_STAT
+    // reg_IE_STAT
     always @(posedge CLK or negedge RESETn)
         if (!RESETn)
-            reg_STAT        <= 1'b0;
+            reg_IE_STAT     <= 1'b0;
         else if(DONE_PULSE)
-            reg_STAT        <= 1'b1;
+            reg_IE_STAT     <= 1'b1;
         else if (wr_en && (addr_oft == 3'd2) && (PWDATA[0] == 1'b1))
-            reg_STAT        <= 1'b0;
+            reg_IE_STAT     <= 1'b0;
 
+    // reg_RUN_STAT
+    always @(posedge CLK or negedge RESETn)
+        if (!RESETn)
+            reg_RUN_STAT    <= 1'b0;
+        else if(reg_START_PULSE & ~reg_RUN_STAT)
+            reg_RUN_STAT    <= 1'b1;
+        else if(DONE_PULSE)
+            reg_RUN_STAT    <= 1'b0;
 
     // Read Data
     always @(*)
         case (addr_oft)
             3'd0    : reg_data_out  = 32'h5A5A5A5A;
             3'd1    : reg_data_out  = REG_CTRL;
-            3'd2    : reg_data_out  = {31'd0, reg_STAT};
+            3'd2    : reg_data_out  = {30'd0, reg_RUN_STAT, reg_IE_STAT};
             3'd3    : reg_data_out  = {20'd0, CYCLE_COUNT};
             3'd4    : reg_data_out  = {DEBUG_LOWER_B, DEBUG_LOWER_A};
             3'd5    : reg_data_out  = {DEBUG_LOWER_Y, DEBUG_LOWER_U};
@@ -121,11 +130,11 @@ module RegFile (
 
     // Control Output Signal Assignments
 
-    assign CONSTANT_TIME    = reg_CTRL[5:5];
-    assign DEBUG_MODE       = reg_CTRL[4:4];
-    assign OPCODE           = reg_CTRL[3:1];
+    assign CONSTANT_TIME    = reg_CTRL[14];
+    assign DEBUG_MODE       = reg_CTRL[13];
+    assign OPCODE           = reg_CTRL[12:1];
     assign START_PULSE      = reg_START_PULSE;
-    assign IRQ              = reg_CTRL[6] & reg_STAT;
+    assign IRQ              = reg_CTRL[15] & reg_IE_STAT;
 
     // APB Signal Assignments
 

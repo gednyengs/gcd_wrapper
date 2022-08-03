@@ -38,7 +38,12 @@ module AxiUnpackerCore (
     // 0x1F8    | BEZOUT_B  (168 bytes : 1344 bits) : RO
     // 0x2A0    | DEBUG_A  (168 bytes : 1344 bits) : RO
     // 0x348    | DEBUG_B  (168 bytes : 1344 bits) : RO
-    // 0x3F0    | DEBUG_U  (168 bytes : 1344 bits) : RO
+    // 0x3F0    | DEBUG_U  (168 bytes :    input   wire            SRAM_CEn,
+    input   wire [31:0]     SRAM_ADDR,
+    input   wire [63:0]     SRAM_WDATA,
+    input   wire            SRAM_WEn,
+    input   wire [7:0]      SRAM_WBEn,
+    output  wire [63:0]     SRAM_RDATA, 1344 bits) : RO
     // 0x498    | DEBUG_Y  (168 bytes : 1344 bits) : RO
     // 0x540    | DEBUG_L  (168 bytes : 1344 bits) : RO
     // 0x5E8    | DEBUG_N  (168 bytes : 1344 bits) : RO
@@ -87,6 +92,8 @@ module AxiUnpackerCore (
                 arg_b_flat[(i*64 + j*8 + 7):(i*64 + j*8)] = arg_b_mem[i][j];
             end
 
+    assign arg_a_w = arg_a_flat[1283:0];
+    assign arg_b_w = arg_b_flat[1283:0];
 
     //
     // Read Logic
@@ -144,5 +151,7 @@ module AxiUnpackerCore (
     //
 
     assign SRAM_RDATA   = rd_output;
+    assign ARG_A        = arg_a_w[1278:0];
+    assign ARG_B        = arg_b_w[1278:0];
 
 endmodule
