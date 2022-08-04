@@ -33,15 +33,15 @@ module AxiUnpackerCore (
     // Offset   | Memory Allocation (2560 bytes total)
     // -------------------------------------------------------------------------
     // 0x000    | ARG_A     (256 bytes : 2048 bits) : R/W
-    // 0x0A8    | ARG_B     (256 bytes : 2048 bits) : R/W
-    // 0x150    | BEZOUT_A  (256 bytes : 2048 bits) : RO
-    // 0x1F8    | BEZOUT_B  (256 bytes : 2048 bits) : RO
-    // 0x2A0    | DEBUG_A   (256 bytes : 2048 bits) : RO
-    // 0x348    | DEBUG_B   (256 bytes : 2048 bits) : RO
-    // 0x3F0    | DEBUG_U   (256 bytes : 2048 bits) : RO
-    // 0x498    | DEBUG_Y   (256 bytes : 2048 bits) : RO
-    // 0x540    | DEBUG_L   (256 bytes : 2048 bits) : RO
-    // 0x5E8    | DEBUG_N   (256 bytes : 2048 bits) : RO
+    // 0x100    | ARG_B     (256 bytes : 2048 bits) : R/W
+    // 0x200    | BEZOUT_A  (256 bytes : 2048 bits) : RO
+    // 0x300    | BEZOUT_B  (256 bytes : 2048 bits) : RO
+    // 0x400    | DEBUG_A   (256 bytes : 2048 bits) : RO
+    // 0x500    | DEBUG_B   (256 bytes : 2048 bits) : RO
+    // 0x600    | DEBUG_U   (256 bytes : 2048 bits) : RO
+    // 0x700    | DEBUG_Y   (256 bytes : 2048 bits) : RO
+    // 0x800    | DEBUG_L   (256 bytes : 2048 bits) : RO
+    // 0x900    | DEBUG_N   (256 bytes : 2048 bits) : RO
 
     // Currently Unused Signals
     wire unused         = DONE;
