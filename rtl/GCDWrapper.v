@@ -202,7 +202,7 @@ module GCDWrapper (
     always @(posedge CLK or negedge RESETn)
         if (!RESETn)
             done_r  <= 1'b0;
-        else if (CLKEN)
+        else
             done_r  <= done;
 
     assign done_pulse = done & ~done_r;

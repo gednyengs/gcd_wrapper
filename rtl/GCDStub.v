@@ -8,7 +8,7 @@ module GCDStub (
     input   wire            constant_time,
     input   wire            debug_mode,
     input   wire            start,
-    input   wire [2:0]      op_code,
+    input   wire [11:0]     op_code,
     input   wire [1278:0]   A,
     input   wire [1278:0]   B,
 
