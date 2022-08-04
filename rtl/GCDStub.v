@@ -124,7 +124,7 @@ module GCDStub (
             debug_case_l_r      <= 0;
             debug_case_n_r      <= 0;
         end
-        else if (counter == 12'FFF) begin
+        else if (counter == 12'hFFF) begin
             done_r              <= 1'b1;
             cycle_count_r       <= 12'hFFF;
             bezout_a_r          <= {5'd0, (A+B)};

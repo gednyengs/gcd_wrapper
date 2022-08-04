@@ -111,7 +111,7 @@ module RegFile (
     always @(*)
         case (addr_oft)
             3'd0    : reg_data_out  = 32'h5A5A5A5A;
-            3'd1    : reg_data_out  = REG_CTRL;
+            3'd1    : reg_data_out  = reg_CTRL;
             3'd2    : reg_data_out  = {30'd0, reg_RUN_STAT, reg_IE_STAT};
             3'd3    : reg_data_out  = {20'd0, CYCLE_COUNT};
             3'd4    : reg_data_out  = {DEBUG_LOWER_B, DEBUG_LOWER_A};
