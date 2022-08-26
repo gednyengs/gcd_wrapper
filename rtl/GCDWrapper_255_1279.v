@@ -1,4 +1,4 @@
-module GCDWrapper_1279_1279 (
+module GCDWrapper_255_1279 (
     // Clock and Reset
 
     input   wire            CLK,
@@ -247,7 +247,7 @@ module GCDWrapper_1279_1279 (
     // GCD Module
     //
 
-    XGCDTop_1279 gcd_inst_1279 (
+    XGCDPaddedTop_255_1279 gcd_inst_255 (
         .clk                (CLK),
         .rst_n              (RESETn),
 

@@ -52,12 +52,20 @@ module AxiUnpacker (
     input   wire            DONE,
     input   wire [1283:0]   BEZOUT_A,
     input   wire [1283:0]   BEZOUT_B,
-    input   wire [1283:0]   DEBUG_A,
-    input   wire [1283:0]   DEBUG_B,
-    input   wire [1283:0]   DEBUG_U,
-    input   wire [1283:0]   DEBUG_Y,
-    input   wire [1283:0]   DEBUG_L,
-    input   wire [1283:0]   DEBUG_N
+
+    input   wire [1283:0]   DEBUG_A_CARRY,
+    input   wire [1283:0]   DEBUG_A_SUM,
+    input   wire [1283:0]   DEBUG_B_CARRY,
+    input   wire [1283:0]   DEBUG_B_SUM,
+
+    input   wire [1283:0]   DEBUG_U_CARRY,
+    input   wire [1283:0]   DEBUG_U_SUM,
+    input   wire [1283:0]   DEBUG_Y_CARRY,
+    input   wire [1283:0]   DEBUG_Y_SUM,
+    input   wire [1283:0]   DEBUG_L_CARRY,
+    input   wire [1283:0]   DEBUG_L_SUM,
+    input   wire [1283:0]   DEBUG_N_CARRY,
+    input   wire [1283:0]   DEBUG_N_SUM
 );
 
     wire                    sram_ce_n;
@@ -135,16 +143,26 @@ module AxiUnpacker (
         .SRAM_RDATA         (sram_rdata),
 
         .DONE               (DONE),
+
         .ARG_A              (ARG_A),
         .ARG_B              (ARG_B),
+
         .BEZOUT_A           (BEZOUT_A),
         .BEZOUT_B           (BEZOUT_B),
-        .DEBUG_A            (DEBUG_A),
-        .DEBUG_B            (DEBUG_B),
-        .DEBUG_U            (DEBUG_U),
-        .DEBUG_Y            (DEBUG_Y),
-        .DEBUG_L            (DEBUG_L),
-        .DEBUG_N            (DEBUG_N)
+
+        .DEBUG_A_CARRY      (DEBUG_A_CARRY),
+        .DEBUG_A_SUM        (DEBUG_A_SUM),
+        .DEBUG_B_CARRY      (DEBUG_B_CARRY),
+        .DEBUG_B_SUM        (DEBUG_B_SUM),
+
+        .DEBUG_U_CARRY      (DEBUG_U_CARRY),
+        .DEBUG_U_SUM        (DEBUG_U_SUM),
+        .DEBUG_Y_CARRY      (DEBUG_Y_CARRY),
+        .DEBUG_Y_SUM        (DEBUG_Y_SUM),
+        .DEBUG_L_CARRY      (DEBUG_L_CARRY),
+        .DEBUG_L_SUM        (DEBUG_L_SUM),
+        .DEBUG_N_CARRY      (DEBUG_N_CARRY),
+        .DEBUG_N_SUM        (DEBUG_N_SUM)
     );
 
 endmodule

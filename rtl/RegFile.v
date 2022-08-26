@@ -14,6 +14,7 @@ module RegFile (
     output  wire [31:0]     PRDATA,
 
     // Control Signals
+    output  wire            CLK_EN,
     output  wire            CONSTANT_TIME,
     output  wire            DEBUG_MODE,
     output  wire [11:0]     OPCODE,
@@ -21,17 +22,37 @@ module RegFile (
 
     input   wire            DONE_PULSE,
     input   wire [11:0]     CYCLE_COUNT,
-    input   wire [15:0]     DEBUG_LOWER_A,
-    input   wire [15:0]     DEBUG_LOWER_B,
-    input   wire [15:0]     DEBUG_LOWER_U,
-    input   wire [15:0]     DEBUG_LOWER_Y,
-    input   wire [15:0]     DEBUG_LOWER_L,
-    input   wire [15:0]     DEBUG_LOWER_N,
-    input   wire [3:0]      DEBUG_CASE_A_B,
-    input   wire [4:0]      DEBUG_CASE_U,
-    input   wire [4:0]      DEBUG_CASE_Y,
-    input   wire [4:0]      DEBUG_CASE_L,
-    input   wire [4:0]      DEBUG_CASE_N,
+
+    input   wire            START_OUT,
+
+    input   wire [3:0]      DEBUG_CASE_A_OUT,
+    input   wire [3:0]      DEBUG_CASE_B_OUT,
+
+    input   wire [5:0]      DEBUG_CASE_U_OUT,
+    input   wire [2:0]      U_ODD_DELTA_UPDATE_ADD_CASE_U_OUT,
+    input   wire [2:0]      U_ODD_DELTA_UPDATE_SUB_CASE_U_OUT,
+
+    input   wire [5:0]      DEBUG_CASE_Y_OUT,
+
+    input   wire [5:0]      DEBUG_CASE_L_OUT,
+    input   wire [2:0]      U_ODD_DELTA_UPDATE_ADD_CASE_L_OUT,
+    input   wire [2:0]      U_ODD_DELTA_UPDATE_SUB_CASE_L_OUT,
+
+    input   wire [5:0]      DEBUG_CASE_N_OUT,
+
+    input   wire [4:0]      DELTA_CASE,
+
+    // input   wire [15:0]     DEBUG_LOWER_A,
+    // input   wire [15:0]     DEBUG_LOWER_B,
+    // input   wire [15:0]     DEBUG_LOWER_U,
+    // input   wire [15:0]     DEBUG_LOWER_Y,
+    // input   wire [15:0]     DEBUG_LOWER_L,
+    // input   wire [15:0]     DEBUG_LOWER_N,
+    // input   wire [3:0]      DEBUG_CASE_A_B,
+    // input   wire [4:0]      DEBUG_CASE_U,
+    // input   wire [4:0]      DEBUG_CASE_Y,
+    // input   wire [4:0]      DEBUG_CASE_L,
+    // input   wire [4:0]      DEBUG_CASE_N,
 
     // Interrupt
     output  wire            IRQ
@@ -43,15 +64,17 @@ module RegFile (
     // Offset   | Reg Name
     // -------------------------------------------------------------------------
     // 0x00     | ID Register
-    // 0x04     | CTRL (IE [15:15], CONSTANT_TIME[14:14], DEBUG_MODE[13:13], OPCODE[12:1],
+    // 0x04     | CTRL (CLK_EN[16:16], IE [15:15], CONSTANT_TIME[14:14], DEBUG_MODE[13:13], OPCODE[12:1],
     //                  START_PULSE[0:0])
     // 0x08     | STATUS (RUN_STATUS, IRQ_STATUS)
     // 0x0C     | CYCLE_COUNT
-    // 0x10     | DEBUG_0   (DEBUG_LOWER_B, DEBUG_LOWER_A)
-    // 0x14     | DEBUG_1   (DEBUG_LOWER_Y, DEBUG_LOWER_U)
-    // 0x18     | DEBUG_2   (DEBUG_LOWER_N, DEBUG_LOWER_L)
-    // 0x1C     | DEBUG_3   (DEBUG_CASE_N, DEBUG_CASE_L, DEBUG_CASE_Y, DEBUG_CASE_U,
-    //                       DEBUG_CASE_A_B)
+    // 0x10     | DEBUG_0   (DEBUG_CASE_L_OUT, DEBUG_CASE_Y_OUT, 
+    //                       U_ODD_DELTA_UPDATE_SUB_CASE_U_OUT, 
+    //                       U_ODD_DELTA_UPDATE_ADD_CASE_U_OUT, 
+    //                       DEBUG_CASE_U_OUT, DEBUG_CASE_B_OUT, DEBUG_CASE_A_OUT)
+    // 0x14     | DEBUG_1   (START_OUT, DELTA_CASE, DEBUG_CASE_N_OUT,
+    //                       U_ODD_DELTA_UPDATE_SUB_CASE_L_OUT,
+    //                       U_ODD_DELTA_UPDATE_ADD_CASE_L_OUT)
     //--------------------------------------------------------------------------
 
     // Internal APB Signals
@@ -114,11 +137,8 @@ module RegFile (
             3'd1    : reg_data_out  = reg_CTRL;
             3'd2    : reg_data_out  = {30'd0, reg_RUN_STAT, reg_IE_STAT};
             3'd3    : reg_data_out  = {20'd0, CYCLE_COUNT};
-            3'd4    : reg_data_out  = {DEBUG_LOWER_B, DEBUG_LOWER_A};
-            3'd5    : reg_data_out  = {DEBUG_LOWER_Y, DEBUG_LOWER_U};
-            3'd6    : reg_data_out  = {DEBUG_LOWER_N, DEBUG_LOWER_L};
-            3'd7    : reg_data_out  = {8'd0, DEBUG_CASE_N, DEBUG_CASE_L,
-                                       DEBUG_CASE_Y, DEBUG_CASE_U, DEBUG_CASE_A_B};
+            3'd4    : reg_data_out  = {DEBUG_CASE_L_OUT, DEBUG_CASE_Y_OUT, U_ODD_DELTA_UPDATE_SUB_CASE_U_OUT, U_ODD_DELTA_UPDATE_ADD_CASE_U_OUT, DEBUG_CASE_U_OUT, DEBUG_CASE_B_OUT, DEBUG_CASE_A_OUT};
+            3'd5    : reg_data_out  = {14'd0, START_OUT, DELTA_CASE, DEBUG_CASE_N_OUT, U_ODD_DELTA_UPDATE_SUB_CASE_L_OUT, U_ODD_DELTA_UPDATE_ADD_CASE_L_OUT};
             default : reg_data_out  = 32'd0;
         endcase
 
@@ -130,6 +150,7 @@ module RegFile (
 
     // Control Output Signal Assignments
 
+    assign CLK_EN           = reg_CTRL[15];
     assign CONSTANT_TIME    = reg_CTRL[14];
     assign DEBUG_MODE       = reg_CTRL[13];
     assign OPCODE           = reg_CTRL[12:1];
