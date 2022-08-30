@@ -2,6 +2,7 @@ module GCDWrapper_255_1279 (
     // Clock and Reset
 
     input   wire            CLK,
+    input   wire            CLK_DIV_8,
     input   wire            RESETn,
 
     // Control Interface
@@ -123,7 +124,7 @@ module GCDWrapper_255_1279 (
     //
 
     RegFile reg_file_inst (
-        .CLK                (CLK),
+        .CLK                (CLK_DIV_8),
         .RESETn             (RESETn),
 
         .PADDR              (S_APB_PADDR),
@@ -170,7 +171,7 @@ module GCDWrapper_255_1279 (
     //
 
     AxiUnpacker axi_unpacker_inst (
-        .CLK                (CLK),
+        .CLK                (CLK_DIV_8),
         .RESETn             (RESETn),
 
         .AWID               (S_AXI_AWID),
@@ -235,7 +236,7 @@ module GCDWrapper_255_1279 (
     // Internal Logic
     //
 
-    always @(posedge CLK or negedge RESETn)
+    always @(posedge CLK_DIV_8 or negedge RESETn)
         if (!RESETn)
             done_r  <= 1'b0;
         else
